@@ -1,0 +1,52 @@
+[
+  {
+    "name": "card",
+    "sourceType": "direct_name",
+    "addedByCLI": true
+  },
+  {
+    "name": "input",
+    "sourceType": "direct_name",
+    "addedByCLI": true
+  },
+  {
+    "name": "table",
+    "sourceType": "direct_name",
+    "addedByCLI": true
+  },
+  {
+    "name": "button",
+    "sourceType": "direct_name",
+    "addedByCLI": true
+  },
+  {
+    "name": "dialog",
+    "sourceType": "direct_name",
+    "addedByCLI": true
+  },
+  {
+    "name": "select",
+    "sourceType": "direct_name",
+    "addedByCLI": true
+  },
+  {
+    "name": "skeleton",
+    "sourceType": "direct_name",
+    "addedByCLI": true
+  },
+  {
+    "name": "alert",
+    "sourceType": "direct_name",
+    "addedByCLI": true
+  },
+  {
+    "name": "badge",
+    "sourceType": "direct_name",
+    "addedByCLI": true
+  },
+  {
+    "name": "label",
+    "sourceType": "direct_name",
+    "addedByCLI": true
+  }
+]

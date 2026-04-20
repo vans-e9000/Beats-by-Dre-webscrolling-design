@@ -23,24 +23,24 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AuthProvider>
+      <AuthProvider>
+        <ToastProvider>
           <OfflineProvider>
-            <ToastProvider>
-              <App />
-              <ToastContainer
-                position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-              />
-            </ToastProvider>
+            <App />
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
           </OfflineProvider>
-        </AuthProvider>
+        </ToastProvider>
+      </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>
   </React.StrictMode>

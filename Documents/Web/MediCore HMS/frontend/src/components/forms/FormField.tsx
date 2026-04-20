@@ -1,11 +1,9 @@
 import { ReactNode } from 'react';
-import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FormFieldProps {
   label?: string;
   error?: string;
-  icon?: LucideIcon;
   children: ReactNode;
   required?: boolean;
   className?: string;
@@ -14,7 +12,6 @@ interface FormFieldProps {
 export default function FormField({
   label,
   error,
-  icon: Icon,
   children,
   required,
   className,

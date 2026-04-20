@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Printer, CreditCard, DollarSign, CheckCircle, AlertTriangle } from 'lucide-react';
@@ -9,6 +9,7 @@ import { pageEnter, staggerContainer, cardMount } from '@/utils/motion';
 import { paymentSchema, PaymentFormData } from '@/utils/validators';
 import { useBill, useAddPayment } from '@/hooks/useBills';
 import { formatCurrency, formatDate } from '@/utils/format';
+import { BillItem } from '@/types';
 import { Card, CardHeader, CardBody, CardFooter, Button, Badge, Modal, Input, Select, TableSkeleton } from '@/components';
 import Table from '@/components/common/Table';
 import FormField from '@/components/forms/FormField';
@@ -21,16 +22,7 @@ const statusVariant: Record<string, 'success' | 'warning' | 'danger' | 'info'> =
   overdue: 'danger',
 };
 
-interface BillItemRow {
-  id: string;
-  description: string;
-  quantity: number;
-  unitPrice: number;
-  total: number;
-}
-
 export default function BillDetail() {
-  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
@@ -52,13 +44,13 @@ export default function BillDetail() {
     },
   });
 
-  const onPaymentSubmit = async (data: PaymentFormData) => {
+  const onPaymentSubmit = async (formData: PaymentFormData) => {
     try {
       await addPayment.mutateAsync({
         billId: id!,
-        amount: data.amount,
-        method: data.method,
-        notes: data.notes,
+        amount: formData.amount,
+        method: formData.method,
+        notes: formData.notes,
       });
       setShowPaymentModal(false);
       reset();
@@ -93,12 +85,12 @@ export default function BillDetail() {
     {
       key: 'unitPrice',
       header: 'Unit Price',
-      render: (row: BillItemRow) => formatCurrency(row.unitPrice),
+      render: (row: BillItem) => formatCurrency(row.unitPrice),
     },
     {
       key: 'total',
       header: 'Total',
-      render: (row: BillItemRow) => formatCurrency(row.total),
+      render: (row: BillItem) => formatCurrency(row.total),
     },
   ];
 
@@ -192,10 +184,10 @@ export default function BillDetail() {
       <Card>
         <CardHeader title="Bill Items" />
         <CardBody className="p-0">
-          <Table<BillItemRow>
-            columns={itemColumns}
-            data={bill.items as BillItemRow[]}
-            keyField="id"
+        <Table<BillItem>
+          columns={itemColumns}
+          data={bill.items}
+          keyField="id"
           />
         </CardBody>
         <CardFooter className="flex justify-between">

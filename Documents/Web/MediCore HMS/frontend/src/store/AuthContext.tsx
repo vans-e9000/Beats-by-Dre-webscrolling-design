@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types';
 import { authService } from '@/services/auth';
 
@@ -66,16 +66,16 @@ useEffect(() => {
   initializeAuth();
 }, []);
 
-const login = async (credentials: LoginCredentials) => {
-  dispatch({ type: 'LOGIN_START' });
-  try {
-    const response = await authService.login(credentials);
-    dispatch({ type: 'LOGIN_SUCCESS', payload: { user: response.data.user, token: '' } });
-  } catch (error) {
-    dispatch({ type: 'LOGIN_FAILURE' });
-    throw error;
-  }
-};
+  const login = async (credentials: LoginCredentials) => {
+    dispatch({ type: 'LOGIN_START' });
+    try {
+      const response = await authService.login(credentials);
+      dispatch({ type: 'LOGIN_SUCCESS', payload: response.data });
+    } catch (error) {
+      dispatch({ type: 'LOGIN_FAILURE' });
+      throw error;
+    }
+  };
 
   const logout = async () => {
     try {
@@ -85,16 +85,16 @@ const login = async (credentials: LoginCredentials) => {
     }
   };
 
-const register = async (data: { email: string; password: string; name: string; role: User['role'] }) => {
-  dispatch({ type: 'LOGIN_START' });
-  try {
-    const response = await authService.register(data);
-    dispatch({ type: 'LOGIN_SUCCESS', payload: { user: response.data, token: '' } });
-  } catch (error) {
-    dispatch({ type: 'LOGIN_FAILURE' });
-    throw error;
-  }
-};
+  const register = async (data: { email: string; password: string; name: string; role: User['role'] }) => {
+    dispatch({ type: 'LOGIN_START' });
+    try {
+      const response = await authService.register(data);
+      dispatch({ type: 'LOGIN_SUCCESS', payload: response.data });
+    } catch (error) {
+      dispatch({ type: 'LOGIN_FAILURE' });
+      throw error;
+    }
+  };
 
   return (
     <AuthContext.Provider value={{ ...state, login, logout, register }}>

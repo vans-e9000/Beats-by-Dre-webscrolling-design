@@ -26,7 +26,6 @@ export default function PatientRegistration() {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<PatientFormData>({
     resolver: zodResolver(patientSchema),

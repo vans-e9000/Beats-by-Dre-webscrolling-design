@@ -12,7 +12,7 @@ interface PatientChartProps {
   data: { date: string; patients: number }[];
 }
 
-export default function PatientChart({ data }: PatientChartProps) {
+export default function PatientChart({ data = [] }: PatientChartProps) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>

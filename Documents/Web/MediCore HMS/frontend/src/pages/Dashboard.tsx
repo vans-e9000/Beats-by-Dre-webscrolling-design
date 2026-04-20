@@ -1,21 +1,13 @@
-import { Users, CreditCard, Activity, TrendingUp, UserPlus, FileText, BarChart3 } from 'lucide-react';
+import { Users, CreditCard, Activity, TrendingUp, UserPlus, BarChart3 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { pageEnter, staggerContainer, cardMount } from '@/utils/motion';
 import { useAuth } from '@/store/AuthContext';
 import { Card, CardHeader, CardBody, Badge, Button, CardSkeleton } from '@/components';
 import RevenueChart from '@/components/charts/RevenueChart';
 import PatientChart from '@/components/charts/PatientChart';
-import { cn } from '@/lib/utils';
-import { formatCurrency, formatDate } from '@/utils/format';
+import { formatCurrency } from '@/utils/format';
 import { reportsService, DateRange } from '@/services/reports';
 import { useQuery } from '@tanstack/react-query';
-
-const statIcons = [
-  { icon: Users, label: 'Total Patients' },
-  { icon: CreditCard, label: 'Total Revenue' },
-  { icon: Activity, label: 'Pending Bills' },
-  { icon: TrendingUp, label: 'New Patients' },
-];
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -106,8 +98,8 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader title="Patient Overview" />
-          <CardBody>
-            <PatientChart data={revenueData?.data || []} />
+        <CardBody>
+          <PatientChart data={(revenueData?.data || []).map((d: { date: string; revenue: number }) => ({ date: d.date, patients: 0 }))} />
           </CardBody>
         </Card>
       </div>

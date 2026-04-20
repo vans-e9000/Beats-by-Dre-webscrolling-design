@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { usersService, CreateUserData, UpdateUserData } from '@/services/users';
 import { USER_ROLES } from '@/utils/constants';
+import { User } from '@/types';
 import { registerSchema, RegisterFormData } from '@/utils/validators';
 import { format } from 'date-fns';
 import { motion } from 'motion/react';
@@ -16,15 +17,6 @@ import { useToast } from '@/store/ToastContext';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/lib/utils';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  createdAt: string;
-  [key: string]: unknown;
-}
 
 const roleOptions = Object.entries(USER_ROLES).map(([value, label]) => ({
   value,

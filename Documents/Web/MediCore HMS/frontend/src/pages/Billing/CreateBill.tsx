@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Trash2 } from 'lucide-react';
@@ -10,7 +9,6 @@ import { pageEnter } from '@/utils/motion';
 import { billSchema, BillFormData } from '@/utils/validators';
 import { usePatients } from '@/hooks/usePatients';
 import { useCreateBill } from '@/hooks/useBills';
-import { servicesService } from '@/services/services';
 import { useToast } from '@/store/ToastContext';
 import { formatCurrency } from '@/utils/format';
 import { Card, CardHeader, CardBody, CardFooter, Button, Input, Select } from '@/components';
@@ -22,10 +20,6 @@ export default function CreateBill() {
   const [selectedPatient, setSelectedPatient] = useState<string>('');
 
   const { data: patients } = usePatients({ limit: 100 });
-  const { data: services } = useQuery({
-    queryKey: ['services'],
-    queryFn: () => servicesService.getAll(),
-  });
 
   const createBill = useCreateBill();
 
@@ -82,11 +76,6 @@ export default function CreateBill() {
 
   const handleAddItem = () => {
     append({ description: '', quantity: 1, unitPrice: 0 });
-  };
-
-  const handleSelectService = (index: number, service: { id: string; name: string; price: number }) => {
-    setValue(`items.${index}.description`, service.name);
-    setValue(`items.${index}.unitPrice`, service.price);
   };
 
   const patientOptions = patients?.data.map((p) => ({

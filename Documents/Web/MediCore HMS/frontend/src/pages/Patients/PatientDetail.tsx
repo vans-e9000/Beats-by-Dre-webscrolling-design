@@ -10,7 +10,7 @@ import { GENDER_OPTIONS, BLOOD_GROUPS } from '@/utils/constants';
 import { billsService } from '@/services/bills';
 import { useQuery } from '@tanstack/react-query';
 
-const billBadgeVariant: Record<string, 'pending' | 'warning' | 'partial' | 'info' | 'paid' | 'success' | 'overdue' | 'danger'> = {
+const billBadgeVariant: Record<string, 'success' | 'warning' | 'danger' | 'info' | 'default'> = {
   pending: 'warning',
   partial: 'info',
   paid: 'success',

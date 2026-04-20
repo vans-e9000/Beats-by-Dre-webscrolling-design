@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Eye } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { motion } from 'motion/react';
-import { pageEnter, staggerContainer, cardMount } from '@/utils/motion';
+import { pageEnter } from '@/utils/motion';
 import { Button, Card, CardHeader, CardBody, Badge, TableSkeleton, Input } from '@/components';
 import Table from '@/components/common/Table';
 import { Bill } from '@/types';
@@ -63,7 +62,7 @@ export default function BillList() {
             e.stopPropagation();
             navigate(`/billing/${bill.id}`);
           }}
-          className={cn('p-1 text-secondary-400 hover:text-primary-600')}
+          className="p-1 text-secondary-400 hover:text-primary-600"
         >
           <Eye className="w-4 h-4" />
         </button>

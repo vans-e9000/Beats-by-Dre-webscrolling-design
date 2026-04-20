@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
 import { motion } from 'motion/react';
-import { cn } from '@/lib/utils';
 import { pageEnter } from '@/utils/motion';
 import { Button, Card, CardHeader, CardBody, Badge, Input } from '@/components';
 import { TableSkeleton } from '@/components';
@@ -121,7 +120,7 @@ export default function PatientList() {
           }
         />
         {isLoading ? (
-          <TableSkeleton rows={8} columns={6} />
+          <TableSkeleton rows={8} />
         ) : (
           <CardBody>
             <Table<PatientRow>

@@ -67,6 +67,6 @@ export const conflictResolution = {
     if (strategy === 'last-write-wins') {
       return remoteData;
     }
-    return { ...localData, ...remoteData };
+    return { ...(localData as Record<string, unknown>), ...(remoteData as Record<string, unknown>) };
   },
 };

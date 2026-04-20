@@ -5,6 +5,7 @@ export interface User {
   role: 'admin' | 'doctor' | 'nurse' | 'receptionist' | 'accountant';
   createdAt: string;
   updatedAt: string;
+  [key: string]: unknown;
 }
 
 export interface Patient {
@@ -44,6 +45,7 @@ export interface Bill {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+  [key: string]: unknown;
 }
 
 export interface BillItem {
@@ -52,6 +54,7 @@ export interface BillItem {
   quantity: number;
   unitPrice: number;
   total: number;
+  [key: string]: unknown;
 }
 
 export interface DailySummary {

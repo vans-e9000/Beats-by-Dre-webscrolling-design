@@ -1,10 +1,12 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { pageEnter } from '@/utils/motion';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
 export default function DashboardLayout() {
+  const location = useLocation();
+
   return (
     <div className="flex min-h-screen bg-secondary-50">
       <Sidebar />

@@ -5,10 +5,11 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
 import { PatientList, PatientRegistration, PatientDetail } from '@/pages/Patients';
+import { Doctors } from '@/pages/Doctors';
+import { Appointments } from '@/pages/Appointments';
 import { BillList, CreateBill, BillDetail } from '@/pages/Billing';
 import { DailySummary, RevenueReport } from '@/pages/Reports';
 import UserList from '@/pages/Users/UserList';
-
 function ProtectedRoute({ requireAdmin }: { requireAdmin?: boolean }) {
   const { isAuthenticated, isLoading, user } = useAuth();
 
@@ -36,7 +37,7 @@ export default function App() {
 
   return (
     <Routes>
-      <Route
+    <Route
         path="/login"
         element={
           isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthLayout><Login /></AuthLayout>
@@ -46,10 +47,12 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/doctors" element={<Doctors />} />
           <Route path="/patients" element={<PatientList />} />
           <Route path="/patients/register" element={<PatientRegistration />} />
           <Route path="/patients/:id" element={<PatientDetail />} />
           <Route path="/patients/:id/edit" element={<PatientRegistration />} />
+          <Route path="/appointments" element={<Appointments />} />
           <Route path="/billing" element={<BillList />} />
           <Route path="/billing/create" element={<CreateBill />} />
           <Route path="/billing/:id" element={<BillDetail />} />

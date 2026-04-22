@@ -53,18 +53,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-useEffect(() => {
-  const initializeAuth = async () => {
-    try {
-      const response = await authService.getCurrentUser();
-      dispatch({ type: 'SET_USER', payload: response.data });
-    } catch {
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        const response = await authService.getCurrentUser();
+        dispatch({ type: 'SET_USER', payload: response.data });
+      } catch (err) {
       dispatch({ type: 'SET_LOADING', payload: false });
-    }
-  };
+      }
+    };
 
-  initializeAuth();
-}, []);
+    initializeAuth();
+  }, []);
 
   const login = async (credentials: LoginCredentials) => {
     dispatch({ type: 'LOGIN_START' });

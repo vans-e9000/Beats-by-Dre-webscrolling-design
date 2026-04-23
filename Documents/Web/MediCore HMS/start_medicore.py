@@ -1,96 +1,182 @@
 #!/usr/bin/env python3
 """
 MediCore HMS - Project Starter
-Starts both backend and frontend servers together
+Kills old processes, starts both backend + frontend, and monitors output
+Usage:  python start_medicore.py
+Stop:   Press Ctrl+C (kills both servers and frees ports)
 """
 
 import subprocess
 import sys
 import os
 import time
-import webbrowser
 import threading
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 BACKEND_DIR = os.path.join(PROJECT_DIR, "backend")
 FRONTEND_DIR = os.path.join(PROJECT_DIR, "frontend")
 
-BACKEND_URL = "http://localhost:5000"
-FRONTEND_URL = "http://localhost:5174"
-API_URL = "http://localhost:5000/api"
+BACKEND_PORT = 5000
+FRONTEND_PORT = 5174
+BACKEND_URL = f"http://localhost:{BACKEND_PORT}"
+FRONTEND_URL = f"http://localhost:{FRONTEND_PORT}"
 
-GREEN = "\033[92m"
-YELLOW = "\033[93m"
-RESET = "\033[0m"
-CYAN = "\033[96m"
-
-
-def log(msg: str, color=GREEN):
-    print(f"{color}{msg}{RESET}")
+backend_proc = None
+frontend_proc = None
 
 
-def open_browser():
-    """Open browser after a short delay"""
-    time.sleep(3)
-    log(f"\nOpening browser at {FRONTEND_URL}...", CYAN)
-    webbrowser.open(FRONTEND_URL)
-
-
-def start_backend():
-    """Start the backend server"""
-    log("\n[1/2] Starting Backend Server...", YELLOW)
+def kill_port(port):
+    """Kill any process listening on the given port (Windows)"""
     try:
-        subprocess.run(
-            ["npm", "run", "dev"],
-            cwd=BACKEND_DIR,
-            env={**os.environ, "NODE_ENV": "development"},
-            check=True,
+        result = subprocess.run(
+            f'netstat -ano | findstr ":{port}" | findstr LISTEN',
+            capture_output=True, text=True, shell=True
         )
-    except FileNotFoundError:
-        log("Error: npm not found. Is Node.js installed?", "\033[91m")
-        sys.exit(1)
-    except KeyboardInterrupt:
-        log("\nBackend server stopped")
+        pids = set()
+        for line in result.stdout.strip().splitlines():
+            parts = line.strip().split()
+            if parts:
+                pids.add(parts[-1])
+        for pid in pids:
+            if pid.isdigit() and int(pid) != os.getpid():
+                subprocess.run(
+                    f"taskkill //F //PID {pid}",
+                    shell=True, capture_output=True
+                )
+                print(f"  Killed PID {pid} on port {port}")
+    except Exception:
+        pass
 
 
-def start_frontend():
-    """Start the frontend server"""
-    log("[2/2] Starting Frontend Server...", YELLOW)
-    try:
-        subprocess.run(
-            ["npm", "run", "dev"],
-            cwd=FRONTEND_DIR,
-            env={**os.environ, "NODE_ENV": "development"},
-            check=True,
-        )
-    except FileNotFoundError:
-        log("Error: npm not found. Is Node.js installed?", "\033[91m")
-        sys.exit(1)
-    except KeyboardInterrupt:
-        log("\nFrontend server stopped")
+def check_port(port):
+    """Check if a port is listening"""
+    result = subprocess.run(
+        f'netstat -ano | findstr ":{port}" | findstr LISTEN',
+        capture_output=True, text=True, shell=True
+    )
+    return bool(result.stdout.strip())
+
+
+def cleanup():
+    """Kill both server processes and free ports"""
+    print("\nStopping servers...")
+    for proc in [backend_proc, frontend_proc]:
+        if proc and proc.poll() is None:
+            proc.terminate()
+            try:
+                proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+    kill_port(BACKEND_PORT)
+    kill_port(FRONTEND_PORT)
+    print("All servers stopped.")
+
+
+def stream_output(proc, label):
+    """Stream subprocess output to console with label prefix"""
+    for line in iter(proc.stdout.readline, b''):
+        try:
+            text = line.decode(errors='replace').rstrip()
+            if text:
+                sys.stdout.buffer.write(
+                    f"[{label}] {text}\n".encode(
+                        sys.stdout.encoding, errors='replace'
+                    )
+                )
+                sys.stdout.flush()
+        except Exception:
+            pass
+
+
+def wait_for_port(port, timeout=15, label=""):
+    """Wait until a port is listening, with timeout"""
+    start = time.time()
+    while time.time() - start < timeout:
+        if check_port(port):
+            return True
+        time.sleep(0.5)
+    return False
 
 
 def main():
-    print(f"""
-╔══════════════════════════════════════════╗
-║     MediCore HMS - Starting...       ║
-╠══════════════════════════════════════════╣
-║  Backend: {BACKEND_URL:<25}   ║
-║  Frontend: {FRONTEND_URL:<25}  ║
-╚══════════════════════════════════════════╝
-    """)
+    print("=" * 50)
+    print("   MediCore HMS - Starting Servers")
+    print("=" * 50)
 
-    # Start backend in separate thread to keep running
-    backend_thread = threading.Thread(target=start_backend, daemon=True)
-    backend_thread.start()
+    # Step 1: Kill old processes
+    print("\n[1/3] Cleaning up old processes...")
+    kill_port(BACKEND_PORT)
+    kill_port(FRONTEND_PORT)
+    time.sleep(1)
 
-    # Start frontend
-    start_frontend()
+    # Step 2: Start backend
+    print(f"\n[2/3] Starting Backend on port {BACKEND_PORT}...")
+    global backend_proc
+    backend_proc = subprocess.Popen(
+        ["npm", "run", "dev"],
+        cwd=BACKEND_DIR,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+
+    # Step 3: Start frontend
+    print(f"[3/3] Starting Frontend on port {FRONTEND_PORT}...")
+    global frontend_proc
+    frontend_proc = subprocess.Popen(
+        ["npm", "run", "dev"],
+        cwd=FRONTEND_DIR,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+
+    # Start streaming output in background
+    t1 = threading.Thread(
+        target=stream_output, args=(backend_proc, "BE"), daemon=True
+    )
+    t2 = threading.Thread(
+        target=stream_output, args=(frontend_proc, "FE"), daemon=True
+    )
+    t1.start()
+    t2.start()
+
+    # Wait for both servers to be ready
+    print("\nWaiting for servers to be ready...")
+    be_ready = wait_for_port(BACKEND_PORT, timeout=15, label="Backend")
+    fe_ready = wait_for_port(FRONTEND_PORT, timeout=15, label="Frontend")
+
+    print("\n" + "=" * 50)
+    if be_ready and fe_ready:
+        print("   Both servers are UP!")
+    else:
+        if not be_ready:
+            print(f"   WARNING: Backend not responding on :{BACKEND_PORT}")
+        if not fe_ready:
+            print(f"   WARNING: Frontend not responding on :{FRONTEND_PORT}")
+    print("=" * 50)
+    print(f"   Backend:  {BACKEND_URL}")
+    print(f"   Frontend: {FRONTEND_URL}")
+    print(f"   Open:     {FRONTEND_URL}")
+    print("=" * 50)
+    print("\n   Press Ctrl+C to stop both servers\n")
+
+    # Keep running until Ctrl+C
+    try:
+        while True:
+            if backend_proc.poll() is not None:
+                print("Backend process exited unexpectedly.")
+                break
+            if frontend_proc.poll() is not None:
+                print("Frontend process exited unexpectedly.")
+                break
+            time.sleep(1)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        cleanup()
+        sys.exit(0)
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        log("\n\nShutting down MediCore HMS...")
-        sys.exit(0)
+    main()

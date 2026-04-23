@@ -6,6 +6,8 @@ import {
   FileText,
   Settings,
   LogOut,
+  Calendar,
+  Stethoscope,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { slideIn } from '@/utils/motion';
@@ -15,6 +17,8 @@ import { useAuth } from '@/store/AuthContext';
 const menuItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/patients', label: 'Patients', icon: Users },
+  { path: '/appointments', label: 'Appointments', icon: Calendar },
+  { path: '/doctors', label: 'Doctors', icon: Stethoscope },
   { path: '/billing', label: 'Billing', icon: CreditCard },
   { path: '/reports', label: 'Reports', icon: FileText },
 ];

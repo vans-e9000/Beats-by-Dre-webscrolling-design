@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Eye } from 'lucide-react';
+import { Plus, Search, Eye, X } from 'lucide-react';
 import { motion } from 'motion/react';
 import { pageEnter } from '@/utils/motion';
-import { Button, Card, CardHeader, CardBody, Badge, TableSkeleton, Input } from '@/components';
+import { Button, Card, CardHeader, CardBody, Badge, TableSkeleton, Input, Select } from '@/components';
 import Table from '@/components/common/Table';
 import { Bill } from '@/types';
 import { useBills } from '@/hooks/useBills';
@@ -16,12 +16,27 @@ const statusVariant: Record<string, 'success' | 'warning' | 'danger' | 'info'> =
   overdue: 'danger',
 };
 
+const statusOptions: { value: Bill['status'] | ''; label: string }[] = [
+  { value: '', label: 'All Statuses' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'partial', label: 'Partial' },
+  { value: 'paid', label: 'Paid' },
+  { value: 'overdue', label: 'Overdue' },
+  { value: 'cancelled', label: 'Cancelled' },
+];
+
 export default function BillList() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<Bill['status'] | ''>('');
   const [page, setPage] = useState(1);
 
-  const { data, isLoading } = useBills({ page, limit: 25 });
+  const { data, isLoading } = useBills({ 
+    page, 
+    limit: 25,
+    search,
+    status: statusFilter || undefined,
+  });
 
   const columns = [
     { key: 'billNumber', header: 'Bill #' },
@@ -51,7 +66,7 @@ export default function BillList() {
     {
       key: 'dueDate',
       header: 'Due Date',
-      render: (bill: Bill) => formatDate(bill.dueDate),
+      render: (bill: Bill) => bill.dueDate ? formatDate(bill.dueDate) : 'N/A',
     },
     {
       key: 'actions',
@@ -95,22 +110,41 @@ export default function BillList() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader
-          title="Bill List"
-          action={
+  <Card>
+      <CardHeader
+        title="Bill List"
+        action={
+          <div className="flex gap-4">
+            <Select
+              options={statusOptions}
+              value={statusFilter}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value as Bill['status'] | '');
+                  setPage(1);
+                }}
+              className="w-40"
+            />
             <div className="relative w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary-400" />
               <Input
                 type="text"
-                placeholder="Search bills..."
+                placeholder="Search patient or bill #..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10"
+                className="pl-10 pr-8"
               />
+              {search && (
+                <button
+                  onClick={() => setSearch('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400 hover:text-secondary-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
-          }
-        />
+          </div>
+        }
+      />
         <CardBody>
           <Table<Bill>
             columns={columns}
@@ -122,23 +156,23 @@ export default function BillList() {
         </CardBody>
       </Card>
 
-      {data && data.totalPages > 1 && (
+      {data && data.pagination && data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-center gap-2">
           <Button
             variant="secondary"
             size="sm"
-            disabled={page === 1}
+            disabled={page === 1 || !data.pagination.hasPrev}
             onClick={() => setPage(page - 1)}
           >
             Previous
           </Button>
           <span className="text-sm text-secondary-600">
-            Page {page} of {data.totalPages}
+            Page {page} of {data.pagination.totalPages}
           </span>
           <Button
             variant="secondary"
             size="sm"
-            disabled={page === data.totalPages}
+            disabled={page >= data.pagination.totalPages || !data.pagination.hasNext}
             onClick={() => setPage(page + 1)}
           >
             Next

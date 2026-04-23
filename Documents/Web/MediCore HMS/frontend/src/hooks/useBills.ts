@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { billsService, BillFilters, CreateBillData, PaymentData } from '@/services/bills';
+import { billsService, BillFilters, CreateBillData, PaymentData, UpdateBillData } from '@/services/bills';
 
-export function useBills(filters: BillFilters = {}) {
+export function useBills(filters: BillFilters & { search?: string } = {}) {
   return useQuery({
     queryKey: ['bills', filters],
     queryFn: () => billsService.getAll(filters),
@@ -31,7 +31,7 @@ export function useUpdateBill() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, bill }: { id: string; bill: Partial<CreateBillData> }) =>
+    mutationFn: ({ id, bill }: { id: string; bill: Partial<UpdateBillData> }) =>
       billsService.update(id, bill),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['bills'] });

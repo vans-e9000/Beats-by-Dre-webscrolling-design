@@ -3,7 +3,6 @@ import { ApiResponse, Patient, PaginatedResponse } from '@/types';
 
 export interface PatientFilters {
   search?: string;
-  status?: Patient['status'];
   page?: number;
   limit?: number;
 }
@@ -15,14 +14,15 @@ export interface CreatePatientData {
   gender: Patient['gender'];
   phone: string;
   email?: string;
-  address: string;
-  city: string;
-  state: string;
-  emergencyContact?: string;
-  emergencyPhone?: string;
+  address?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
   bloodGroup?: string;
   allergies?: string;
   medicalHistory?: string;
+  insuranceProvider?: string;
+  insurancePolicyNumber?: string;
+  insuranceExpiry?: string;
 }
 
 export const patientsService = {

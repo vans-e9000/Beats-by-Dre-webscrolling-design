@@ -6,7 +6,8 @@ export interface CreateServiceData {
   description?: string;
   price: number;
   category?: string;
-  active?: boolean;
+  durationMinutes?: number;
+  isActive?: boolean;
 }
 
 export const servicesService = {

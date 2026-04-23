@@ -48,9 +48,9 @@ export default function PatientDetail() {
           <h2 className="text-2xl font-bold text-secondary-800">
             {p.firstName} {p.lastName}
           </h2>
-          <Badge variant={p.status === 'active' ? 'success' : 'default'}>
-            {p.status}
-          </Badge>
+        <Badge variant={p.isDeleted ? 'default' : 'success'}>
+          {p.isDeleted ? 'Inactive' : 'Active'}
+        </Badge>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="secondary" onClick={() => navigate(`/patients/${id}/edit`)}>
@@ -71,7 +71,7 @@ export default function PatientDetail() {
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <p className="text-sm text-secondary-500">Patient Number</p>
-                <p className="font-medium text-secondary-800">{p.patientNumber}</p>
+                <p className="font-medium text-secondary-800">{p.patientCode}</p>
               </div>
               <div>
                 <p className="text-sm text-secondary-500">Date of Birth</p>
@@ -92,21 +92,18 @@ export default function PatientDetail() {
                 </div>
               )}
               <div>
-                <p className="text-sm text-secondary-500">Address</p>
-                <p className="font-medium text-secondary-800">{p.address}</p>
-                <p className="text-sm text-secondary-500">
-                  {p.city}, {p.state}
-                </p>
-              </div>
-              {p.emergencyContact && (
-                <div>
-                  <p className="text-sm text-secondary-500">Emergency Contact</p>
-                  <p className="font-medium text-secondary-800">{p.emergencyContact}</p>
-                  {p.emergencyPhone && (
-                    <p className="text-sm text-secondary-600">{formatPhone(p.emergencyPhone)}</p>
-                  )}
-                </div>
-              )}
+<p className="text-sm text-secondary-500">Address</p>
+          <p className="font-medium text-secondary-800">{p.address}</p>
+        </div>
+        {(p.emergencyContactName || p.emergencyContactPhone) && (
+          <div>
+            <p className="text-sm text-secondary-500">Emergency Contact</p>
+            <p className="font-medium text-secondary-800">{p.emergencyContactName}</p>
+            {p.emergencyContactPhone && (
+              <p className="text-sm text-secondary-600">{formatPhone(p.emergencyContactPhone)}</p>
+            )}
+          </div>
+        )}
               {p.bloodGroup && (
                 <div>
                   <p className="text-sm text-secondary-500">Blood Group</p>

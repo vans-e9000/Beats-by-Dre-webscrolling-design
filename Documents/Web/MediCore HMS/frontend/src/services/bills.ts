@@ -1,5 +1,5 @@
 import api from './api';
-import { ApiResponse, Bill, PaginatedResponse, BillItem } from '@/types';
+import { ApiResponse, Bill, PaginatedResponse } from '@/types';
 
 export interface BillFilters {
   patientId?: string;
@@ -10,23 +10,37 @@ export interface BillFilters {
   limit?: number;
 }
 
+export interface BillItemInput {
+  serviceId?: string;
+  serviceName: string;
+  quantity: number;
+  unitPrice: number;
+}
+
 export interface CreateBillData {
   patientId: string;
+  visitId: string;
   dueDate: string;
-  items: Omit<BillItem, 'id'>[];
+  items: {
+    serviceId?: string;
+    serviceName: string;
+    quantity: number;
+    unitPrice: number;
+  }[];
   notes?: string;
 }
 
 export interface UpdateBillData {
   dueDate?: string;
-  status?: Bill['status'];
+  status?: Bill['status'] | 'cancelled';
   notes?: string;
 }
 
 export interface PaymentData {
   billId: string;
   amount: number;
-  method: 'cash' | 'card' | 'bank_transfer';
+  paymentMethod: 'cash' | 'card' | 'bank_transfer' | 'mobile_money' | 'insurance';
+  referenceNumber?: string;
   notes?: string;
 }
 
@@ -57,16 +71,17 @@ export const billsService = {
   },
 
   addPayment: async (payment: PaymentData): Promise<ApiResponse<Bill>> => {
-    const { data } = await api.post(`/bills/${payment.billId}/payments`, {
+    const { data } = await api.post(`/bills/${payment.billId}/pay`, {
       amount: payment.amount,
-      method: payment.method,
+      paymentMethod: payment.paymentMethod,
+      referenceNumber: payment.referenceNumber,
       notes: payment.notes,
     });
     return data;
   },
 
   getByPatient: async (patientId: string): Promise<ApiResponse<Bill[]>> => {
-    const { data } = await api.get(`/patients/${patientId}/bills`);
+    const { data } = await api.get(`/bills/patient/${patientId}`);
     return data;
   },
 };

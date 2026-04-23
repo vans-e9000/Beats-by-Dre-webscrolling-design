@@ -32,14 +32,23 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Only retry on 401 if we have a token and haven't already retried
+    // Skip refresh for /auth/me (initial auth check) to prevent infinite loops
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      originalRequest.url !== '/auth/me'
+    ) {
       originalRequest._retry = true;
 
       try {
         await axios.post(`${API_URL}/auth/refresh`, {}, { withCredentials: true });
         return api(originalRequest);
       } catch {
-        window.location.href = '/login';
+        // Only redirect to login if not already on login page
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/login';
+        }
       }
     }
 

@@ -2,7 +2,9 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'doctor' | 'nurse' | 'receptionist' | 'accountant';
+  role: 'admin' | 'doctor' | 'nurse' | 'receptionist' | 'accountant' | 'lab_technician';
+  isActive?: boolean;
+  lastLogin?: string;
   createdAt: string;
   updatedAt: string;
   [key: string]: unknown;
@@ -10,22 +12,23 @@ export interface User {
 
 export interface Patient {
   id: string;
-  patientNumber: string;
+  patientCode: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;
   gender: 'male' | 'female' | 'other';
   phone: string;
   email?: string;
-  address: string;
-  city: string;
-  state: string;
-  emergencyContact?: string;
-  emergencyPhone?: string;
+  address?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
   bloodGroup?: string;
   allergies?: string;
   medicalHistory?: string;
-  status: 'active' | 'inactive';
+  insuranceProvider?: string;
+  insurancePolicyNumber?: string;
+  insuranceExpiry?: string;
+  isDeleted?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -34,15 +37,19 @@ export interface Bill {
   id: string;
   billNumber: string;
   patientId: string;
+  visitId: string;
   patient?: Patient;
+  subtotal: number;
+  tax: number;
+  discount: number;
   totalAmount: number;
   paidAmount: number;
   balance: number;
-  status: 'pending' | 'partial' | 'paid' | 'overdue';
-  dueDate: string;
-  items: BillItem[];
+  status: 'pending' | 'partial' | 'paid' | 'overdue' | 'cancelled' | 'draft';
+  dueDate?: string;
   notes?: string;
-  createdBy: string;
+  items: BillItem[];
+  payments?: Payment[];
   createdAt: string;
   updatedAt: string;
   [key: string]: unknown;
@@ -50,11 +57,26 @@ export interface Bill {
 
 export interface BillItem {
   id: string;
-  description: string;
+  billId: string;
+  serviceId?: string;
+  serviceName: string;
   quantity: number;
   unitPrice: number;
-  total: number;
+  subtotal: number;
   [key: string]: unknown;
+}
+
+export interface Payment {
+  id: string;
+  billId: string;
+  amount: number;
+  paymentMethod: 'cash' | 'card' | 'bank_transfer' | 'mobile_money' | 'insurance';
+  referenceNumber?: string;
+  paidAt: string;
+  processedBy?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface DailySummary {
@@ -81,12 +103,22 @@ export interface ApiResponse<T> {
   success: boolean;
 }
 
+export interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   total: number;
   page: number;
   limit: number;
   totalPages: number;
+  pagination: PaginationInfo;
 }
 
 export interface AuthState {
@@ -114,7 +146,8 @@ export interface Service {
   description?: string;
   price: number;
   category?: string;
-  active: boolean;
+  durationMinutes?: number;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -124,30 +157,16 @@ export interface Visit {
   patientId: string;
   patient?: Patient;
   visitNumber: string;
-  chiefComplaint?: string;
+  visitType: 'outpatient' | 'inpatient' | 'emergency' | 'follow_up';
+  visitDate: string;
+  doctorId?: string;
+  symptoms?: string;
   diagnosis?: string;
-  treatment?: string;
+  prescription?: string;
   notes?: string;
-  vitals?: {
-    bloodPressure?: string;
-    pulse?: number;
-    temperature?: number;
-    weight?: number;
-  };
-  status: 'pending' | 'in-progress' | 'completed' | 'cancelled';
-  createdBy: string;
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
   createdAt: string;
   updatedAt: string;
-}
-
-export interface Payment {
-  id: string;
-  billId: string;
-  amount: number;
-  method: 'cash' | 'card' | 'bank_transfer';
-  notes?: string;
-  createdBy: string;
-  createdAt: string;
 }
 
 export interface OfflineRecord<T> {

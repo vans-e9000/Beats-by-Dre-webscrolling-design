@@ -3,19 +3,22 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'success' | 'warning' | 'info';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading, disabled, children, ...props }, ref) => {
-    const variantClasses = {
-      primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
-      secondary: 'border border-secondary-200 bg-white text-secondary-700 hover:bg-secondary-50 focus:ring-secondary-400',
-      danger: 'bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-500',
-      ghost: 'bg-transparent text-secondary-600 hover:bg-secondary-100 focus:ring-secondary-400',
-    };
+const variantClasses = {
+    primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
+    secondary: 'border border-secondary-200 bg-white text-secondary-700 hover:bg-secondary-50 focus:ring-secondary-400',
+    danger: 'bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-500',
+    ghost: 'bg-transparent text-secondary-600 hover:bg-secondary-100 focus:ring-secondary-400',
+    success: 'bg-success-600 text-white hover:bg-success-700 focus:ring-success-500',
+    warning: 'bg-warning-600 text-white hover:bg-warning-700 focus:ring-warning-500',
+    info: 'bg-medical-600 text-white hover:bg-medical-700 focus:ring-medical-500',
+  };
 
     const sizeClasses = {
       sm: 'px-3 py-1.5 text-sm',

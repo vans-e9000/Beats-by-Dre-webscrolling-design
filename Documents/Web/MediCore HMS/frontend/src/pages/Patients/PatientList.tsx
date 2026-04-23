@@ -22,29 +22,28 @@ export default function PatientList() {
   const deletePatient = useDeletePatient();
 
   const columns = [
-    {
-      key: 'patientNumber',
-      header: 'Patient #',
-      render: (patient: PatientRow) => (
-        <span className="font-medium">{patient.patientNumber}</span>
-      ),
-    },
-    {
-      key: 'name',
-      header: 'Name',
-      render: (patient: PatientRow) => `${patient.firstName} ${patient.lastName}`,
-    },
-    { key: 'phone', header: 'Phone' },
-    { key: 'city', header: 'City' },
-    {
-      key: 'status',
-      header: 'Status',
-      render: (patient: PatientRow) => (
-        <Badge variant={patient.status === 'active' ? 'success' : 'default'}>
-          {patient.status as string}
-        </Badge>
-      ),
-    },
+  {
+    key: 'patientCode',
+    header: 'Patient #',
+    render: (patient: PatientRow) => (
+      <span className="font-medium">{patient.patientCode}</span>
+    ),
+  },
+  {
+    key: 'name',
+    header: 'Name',
+    render: (patient: PatientRow) => `${patient.firstName} ${patient.lastName}`,
+  },
+  { key: 'phone', header: 'Phone' },
+  {
+    key: 'isDeleted',
+    header: 'Status',
+    render: (patient: PatientRow) => (
+      <Badge variant={patient.isDeleted ? 'default' : 'success'}>
+        {patient.isDeleted ? 'Inactive' : 'Active'}
+      </Badge>
+    ),
+  },
     {
       key: 'actions',
       header: 'Actions',

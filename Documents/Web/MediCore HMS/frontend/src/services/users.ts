@@ -6,6 +6,8 @@ export interface CreateUserData {
   password: string;
   name: string;
   role: User['role'];
+  phone?: string;
+  specialty?: string;
 }
 
 export interface UpdateUserData {
@@ -13,6 +15,8 @@ export interface UpdateUserData {
   name?: string;
   role?: User['role'];
   isActive?: boolean;
+  phone?: string;
+  specialty?: string;
 }
 
 export interface UserFilters {

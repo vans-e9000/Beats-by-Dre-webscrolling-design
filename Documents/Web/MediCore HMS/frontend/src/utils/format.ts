@@ -1,7 +1,7 @@
 import { format, formatDistanceToNow, parseISO, isValid } from 'date-fns';
 
-export const formatCurrency = (amount: number, currency = 'USD'): string => {
-  return new Intl.NumberFormat('en-US', {
+export const formatCurrency = (amount: number, currency = 'TZS'): string => {
+  return new Intl.NumberFormat('en-TZ', {
     style: 'currency',
     currency,
     minimumFractionDigits: 2,

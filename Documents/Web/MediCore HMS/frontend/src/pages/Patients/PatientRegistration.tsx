@@ -37,13 +37,14 @@ export default function PatientRegistration() {
       phone: patientData.data.phone,
       email: patientData.data.email,
       address: patientData.data.address,
-      city: patientData.data.city,
-      state: patientData.data.state,
-      emergencyContact: patientData.data.emergencyContact,
-      emergencyPhone: patientData.data.emergencyPhone,
+      emergencyContactName: patientData.data.emergencyContactName,
+      emergencyContactPhone: patientData.data.emergencyContactPhone,
       bloodGroup: patientData.data.bloodGroup,
       allergies: patientData.data.allergies,
       medicalHistory: patientData.data.medicalHistory,
+      insuranceProvider: patientData.data.insuranceProvider,
+      insurancePolicyNumber: patientData.data.insurancePolicyNumber,
+      insuranceExpiry: patientData.data.insuranceExpiry,
     } : undefined,
   });
 
@@ -117,40 +118,47 @@ export default function PatientRegistration() {
                 />
               </FormField>
 
-              <FormField label="Address" error={errors.address?.message} required className="md:col-span-2">
-                <Input
-                  placeholder="Enter address"
-                  {...register('address')}
-                />
-              </FormField>
+<FormField label="Address" error={errors.address?.message} required className="md:col-span-2">
+            <Input
+              placeholder="Enter address"
+              {...register('address')}
+            />
+          </FormField>
 
-              <FormField label="City" error={errors.city?.message} required>
-                <Input
-                  placeholder="Enter city"
-                  {...register('city')}
-                />
-              </FormField>
+          <FormField label="Emergency Contact Name" error={errors.emergencyContactName?.message}>
+            <Input
+              placeholder="Emergency contact name"
+              {...register('emergencyContactName')}
+            />
+          </FormField>
 
-              <FormField label="State" error={errors.state?.message} required>
-                <Input
-                  placeholder="Enter state"
-                  {...register('state')}
-                />
-              </FormField>
+          <FormField label="Emergency Phone" error={errors.emergencyContactPhone?.message}>
+            <Input
+              placeholder="Emergency phone"
+              {...register('emergencyContactPhone')}
+            />
+          </FormField>
 
-              <FormField label="Emergency Contact" error={errors.emergencyContact?.message}>
-                <Input
-                  placeholder="Emergency contact name"
-                  {...register('emergencyContact')}
-                />
-              </FormField>
+          <FormField label="Insurance Provider">
+            <Input
+              placeholder="Insurance provider"
+              {...register('insuranceProvider')}
+            />
+          </FormField>
 
-              <FormField label="Emergency Phone" error={errors.emergencyPhone?.message}>
-                <Input
-                  placeholder="Emergency phone"
-                  {...register('emergencyPhone')}
-                />
-              </FormField>
+          <FormField label="Insurance Policy Number">
+            <Input
+              placeholder="Policy number"
+              {...register('insurancePolicyNumber')}
+            />
+          </FormField>
+
+          <FormField label="Insurance Expiry">
+            <Input
+              type="date"
+              {...register('insuranceExpiry')}
+            />
+          </FormField>
 
               <FormField label="Blood Group">
                 <Select

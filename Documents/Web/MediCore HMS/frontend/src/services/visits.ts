@@ -3,37 +3,32 @@ import { ApiResponse, Visit, PaginatedResponse } from '@/types';
 
 export interface VisitFilters {
   patientId?: string;
+  doctorId?: string;
   status?: Visit['status'];
   startDate?: string;
   endDate?: string;
   page?: number;
   limit?: number;
+  search?: string;
 }
 
 export interface CreateVisitData {
   patientId: string;
-  chiefComplaint?: string;
-  vitals?: {
-    bloodPressure?: string;
-    pulse?: number;
-    temperature?: number;
-    weight?: number;
-  };
+  doctorId?: string;
+  visitType?: Visit['visitType'];
+  symptoms?: string;
+  diagnosis?: string;
+  prescription?: string;
   notes?: string;
 }
 
 export interface UpdateVisitData {
-  chiefComplaint?: string;
+  visitType?: Visit['visitType'];
+  symptoms?: string;
   diagnosis?: string;
-  treatment?: string;
-  vitals?: {
-    bloodPressure?: string;
-    pulse?: number;
-    temperature?: number;
-    weight?: number;
-  };
-  status?: Visit['status'];
+  prescription?: string;
   notes?: string;
+  status?: Visit['status'];
 }
 
 export const visitsService = {
@@ -62,8 +57,8 @@ export const visitsService = {
     return data;
   },
 
-  complete: async (id: string, diagnosis: string, treatment: string): Promise<ApiResponse<Visit>> => {
-    const { data } = await api.post(`/visits/${id}/complete`, { diagnosis, treatment });
+  complete: async (id: string, diagnosis: string, prescription: string): Promise<ApiResponse<Visit>> => {
+    const { data } = await api.post(`/visits/${id}/complete`, { diagnosis, prescription });
     return data;
   },
 

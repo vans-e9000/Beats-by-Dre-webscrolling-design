@@ -10,7 +10,7 @@ export const registerSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string().min(1, 'Please confirm your password'),
   name: z.string().min(1, 'Name is required'),
-  role: z.enum(['admin', 'doctor', 'nurse', 'receptionist', 'accountant']),
+  role: z.enum(['admin', 'doctor', 'nurse', 'receptionist', 'accountant', 'lab_technician']),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],
@@ -24,23 +24,26 @@ export const patientSchema = z.object({
   phone: z.string().min(10, 'Phone number is required'),
   email: z.string().email('Invalid email address').optional().or(z.literal('')),
   address: z.string().min(1, 'Address is required'),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  emergencyContact: z.string().optional(),
-  emergencyPhone: z.string().optional(),
+  emergencyContactName: z.string().optional(),
+  emergencyContactPhone: z.string().optional(),
   bloodGroup: z.string().optional(),
   allergies: z.string().optional(),
   medicalHistory: z.string().optional(),
+  insuranceProvider: z.string().optional(),
+  insurancePolicyNumber: z.string().optional(),
+  insuranceExpiry: z.string().optional(),
 });
 
 export const billItemSchema = z.object({
-  description: z.string().min(1, 'Description is required'),
+  serviceId: z.string().optional(),
+  serviceName: z.string().min(1, 'Service name is required'),
   quantity: z.number().min(1, 'Quantity must be at least 1'),
   unitPrice: z.number().min(0, 'Unit price must be positive'),
 });
 
 export const billSchema = z.object({
   patientId: z.string().min(1, 'Patient is required'),
+  visitId: z.string().min(1, 'Visit is required'),
   dueDate: z.string().min(1, 'Due date is required'),
   items: z.array(billItemSchema).min(1, 'At least one item is required'),
   notes: z.string().optional(),
@@ -48,7 +51,8 @@ export const billSchema = z.object({
 
 export const paymentSchema = z.object({
   amount: z.number().min(1, 'Amount must be greater than 0'),
-  method: z.enum(['cash', 'card', 'bank_transfer']),
+  paymentMethod: z.enum(['cash', 'card', 'bank_transfer', 'mobile_money', 'insurance']),
+  referenceNumber: z.string().optional(),
   notes: z.string().optional(),
 });
 
